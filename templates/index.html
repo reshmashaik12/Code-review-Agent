@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Code Review Agent</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🤖 Code Review Agent</h1>
+
+        <textarea id="code" placeholder="Paste your code here..."></textarea>
+
+        <button onclick="submitCode()">Review Code</button>
+
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+        function submitCode() {
+            const code = document.getElementById("code").value;
+
+            fetch("/review", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "code=" + encodeURIComponent(code)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("result").innerText =
+                        "🧠 Code Review Result:\n\n" +
+                        data.code_review.join("\n") +
+                        "\n\n📉 Compression Stats:\n" +
+                        "Original Tokens: " + data.compression_stats.original_tokens + "\n" +
+                        "Compressed Tokens: " + data.compression_stats.compressed_tokens + "\n" +
+                        "Compression Ratio: " + data.compression_stats.compression_ratio;
+                });
+        }
+    </script>
+
+</body>
+
+</html>
